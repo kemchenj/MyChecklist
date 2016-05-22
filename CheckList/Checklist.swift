@@ -27,12 +27,13 @@ class Checklist: NSObject, NSCoding
     }
     
     func countUncheckedItems() -> Int{
-//        var count = 0
-//        for item in items where !item.checked {
-//            count += 1
-//        }
-//        
-//        return count
+        // var count = 0
+        // for item in items where !item.checked {
+        //     count += 1
+        // }
+        
+        // return count
+        
         
         return items.reduce(0) { cnt, item in cnt + (item.checked ? 0 : 1) }
         // cnt是参数的名字, 也就是0, 可以随意更改
@@ -40,6 +41,9 @@ class Checklist: NSObject, NSCoding
         // cnt + (item.checked ? 0 : 1)
     }
     
+    func sortItemsWithDueDate() {
+        items.sortInPlace({ item1, item2 in return item1.dueDate.compare(item2.dueDate) == .OrderedAscending })
+    }
     
     
     
@@ -56,4 +60,5 @@ class Checklist: NSObject, NSCoding
         aDecoder.encodeObject(items, forKey: "Items")
         aDecoder.encodeObject(iconName, forKey: "IconName")
     }
+    
 }
