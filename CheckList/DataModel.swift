@@ -12,10 +12,10 @@ class DataModel {
     var lists = [Checklist]()
     var indexOfSelectedChecklist : Int {
         get {
-            return NSUserDefaults.standardUserDefaults().integerForKey("ChecklistIndex")
+            return UserDefaults.standard().integer(forKey: "ChecklistIndex")
         }
         set {
-            return NSUserDefaults.standardUserDefaults().setInteger(newValue, forKey: "ChecklistIndex")
+            return UserDefaults.standard().set(newValue, forKey: "ChecklistIndex")
         }
     }
     
@@ -27,10 +27,10 @@ class DataModel {
     }
     
     class func nextChecklistItemID() -> Int {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
+        let userDefaults = UserDefaults.standard()
         
-        let itemID = userDefaults.integerForKey("ChecklistItemID")
-        userDefaults.setInteger(itemID + 1, forKey: "ChecklistItemID")
+        let itemID = userDefaults.integer(forKey: "ChecklistItemID")
+        userDefaults.set(itemID + 1, forKey: "ChecklistItemID")
         userDefaults.synchronize()
         
         return itemID
@@ -46,24 +46,24 @@ class DataModel {
                            "ChecklistItemID" : 0
         ]
         
-        NSUserDefaults.standardUserDefaults().registerDefaults(dictionary)
+        UserDefaults.standard().register(dictionary)
     }
     
     func handleTheFirstTime() {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        let firstTime = userDefaults.boolForKey("FirstTime")
+        let userDefaults = UserDefaults.standard()
+        let firstTime = userDefaults.bool(forKey: "FirstTime")
         if firstTime {
             let checklist = Checklist(name: "List")
             lists.append(checklist)
             indexOfSelectedChecklist = 0
-            userDefaults.setBool(false, forKey: "FirstTime")
+            userDefaults.set(false, forKey: "FirstTime")
             userDefaults.synchronize()
         }
         
     }
 
     func sortChecklists() {
-        lists.sortInPlace({ checklist1, checklist2 in return checklist1.name.localizedStandardCompare(checklist2.name) == .OrderedAscending })
+        lists.sort(isOrderedBefore: { checklist1, checklist2 in return checklist1.name.localizedStandardCompare(checklist2.name) == .orderedAscending })
     }
     
     
@@ -72,20 +72,20 @@ class DataModel {
 
     func saveChecklists() {
         let data = NSMutableData()
-        let archiver = NSKeyedArchiver(forWritingWithMutableData: data)
+        let archiver = NSKeyedArchiver(forWritingWith: data)
 
-        archiver.encodeObject(lists, forKey: "Checklists")
+        archiver.encode(lists, forKey: "Checklists")
         archiver.finishEncoding()
 
-        data.writeToFile(dataFilePath(), atomically: true)
+        data.write(toFile: dataFilePath(), atomically: true)
     }
 
     func loadChecklists() {
         let path = dataFilePath()
-        if NSFileManager.defaultManager().fileExistsAtPath(path) {
-            if let data = NSData(contentsOfFile: path) {
-                let unarchiver = NSKeyedUnarchiver(forReadingWithData: data)
-                lists = unarchiver.decodeObjectForKey("Checklists") as! [Checklist]
+        if FileManager.default().fileExists(atPath: path) {
+            if let data = try? Data(contentsOf: URL(fileURLWithPath: path)) {
+                let unarchiver = NSKeyedUnarchiver(forReadingWith: data)
+                lists = unarchiver.decodeObject(forKey: "Checklists") as! [Checklist]
                 unarchiver.finishDecoding()
                 
                 sortChecklists()
@@ -94,11 +94,11 @@ class DataModel {
     }
 
     func documentDirectory() -> String {
-        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         return paths[0]
     }
 
     func dataFilePath() -> String {
-        return (documentDirectory() as NSString).stringByAppendingPathComponent("Checklist.plist")
+        return (documentDirectory() as NSString).appendingPathComponent("Checklist.plist")
     }
 }

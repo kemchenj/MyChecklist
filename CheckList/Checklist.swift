@@ -42,7 +42,7 @@ class Checklist: NSObject, NSCoding
     }
     
     func sortItemsWithDueDate() {
-        items.sortInPlace({ item1, item2 in return item1.dueDate.compare(item2.dueDate) == .OrderedAscending })
+        items.sort(isOrderedBefore: { item1, item2 in return item1.dueDate.compare(item2.dueDate as Date) == .orderedAscending })
     }
     
     
@@ -50,15 +50,15 @@ class Checklist: NSObject, NSCoding
     // MARK: - NSCoding Protocol
     
     required init?(coder aDecoder: NSCoder) {
-        name     = aDecoder.decodeObjectForKey("Name") as! String
-        items    = aDecoder.decodeObjectForKey("Items") as! [ChecklistItem]
-        iconName = aDecoder.decodeObjectForKey("IconName") as! String
+        name     = aDecoder.decodeObject(forKey: "Name") as! String
+        items    = aDecoder.decodeObject(forKey: "Items") as! [ChecklistItem]
+        iconName = aDecoder.decodeObject(forKey: "IconName") as! String
     }
 
-    func encodeWithCoder(aDecoder: NSCoder) {
-        aDecoder.encodeObject(name, forKey: "Name")
-        aDecoder.encodeObject(items, forKey: "Items")
-        aDecoder.encodeObject(iconName, forKey: "IconName")
+    func encode(with aDecoder: NSCoder) {
+        aDecoder.encode(name, forKey: "Name")
+        aDecoder.encode(items, forKey: "Items")
+        aDecoder.encode(iconName, forKey: "IconName")
     }
     
 }
