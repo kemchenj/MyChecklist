@@ -42,7 +42,7 @@ class Checklist: NSObject, NSCoding
     }
     
     func sortItemsWithDueDate() {
-        items.sort(isOrderedBefore: { item1, item2 in return item1.dueDate.compare(item2.dueDate as Date) == .orderedAscending })
+        items.sort(by: { item1, item2 in return item1.dueDate.compare(item2.dueDate as Date) == .orderedAscending })
     }
     
     

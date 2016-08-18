@@ -109,9 +109,9 @@ extension ListDetailViewController: IconPickerViewControllerDelegate {
 
 extension ListDetailViewController {
     
-    override func prepare(for segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "PickIcon" {
-            let controller = segue.destinationViewController as! IconPickerViewController
+            let controller = segue.destination as! IconPickerViewController
             controller.delegate = self
         }
     }
@@ -141,8 +141,8 @@ extension ListDetailViewController {
 extension ListDetailViewController : UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let oldText: NSString = textField.text!
-        let newText: NSString = oldText.replacingCharacters(in: range, with: string)
+        let oldText = textField.text! as NSString
+        let newText = oldText.replacingCharacters(in: range, with: string) as NSString
 
         doneBarButton.isEnabled = (newText.length > 0)
         return true

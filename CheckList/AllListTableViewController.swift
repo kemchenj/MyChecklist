@@ -41,12 +41,12 @@ class AllListTableViewController: UITableViewController, ListDetailViewControlle
     
     // MARK: - Segue
     
-    override func prepare(for segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowChecklist" {
-            let controller = segue.destinationViewController as! ChecklistViewController
+            let controller = segue.destination as! ChecklistViewController
             controller.checklist = sender as! Checklist
         } else if segue.identifier == "AddChecklist" {
-            let navigationController = segue.destinationViewController as! UINavigationController
+            let navigationController = segue.destination as! UINavigationController
             let controller = navigationController.topViewController as! ListDetailViewController
             controller.delegate = self
             controller.checklistToEdit = nil

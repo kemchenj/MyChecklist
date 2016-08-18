@@ -12,10 +12,10 @@ class DataModel {
     var lists = [Checklist]()
     var indexOfSelectedChecklist : Int {
         get {
-            return UserDefaults.standard().integer(forKey: "ChecklistIndex")
+            return UserDefaults.standard.integer(forKey: "ChecklistIndex")
         }
         set {
-            return UserDefaults.standard().set(newValue, forKey: "ChecklistIndex")
+            return UserDefaults.standard.set(newValue, forKey: "ChecklistIndex")
         }
     }
     
@@ -27,7 +27,7 @@ class DataModel {
     }
     
     class func nextChecklistItemID() -> Int {
-        let userDefaults = UserDefaults.standard()
+        let userDefaults = UserDefaults.standard
         
         let itemID = userDefaults.integer(forKey: "ChecklistItemID")
         userDefaults.set(itemID + 1, forKey: "ChecklistItemID")
@@ -44,13 +44,13 @@ class DataModel {
         let dictionary = [ "ChecklistIndex"  : -1 ,
                            "FirstTime"       : true,
                            "ChecklistItemID" : 0
-        ]
+        ] as [String : Any]
         
-        UserDefaults.standard().register(dictionary)
+        UserDefaults.standard.register(defaults: dictionary)
     }
     
     func handleTheFirstTime() {
-        let userDefaults = UserDefaults.standard()
+        let userDefaults = UserDefaults.standard
         let firstTime = userDefaults.bool(forKey: "FirstTime")
         if firstTime {
             let checklist = Checklist(name: "List")
@@ -63,7 +63,7 @@ class DataModel {
     }
 
     func sortChecklists() {
-        lists.sort(isOrderedBefore: { checklist1, checklist2 in return checklist1.name.localizedStandardCompare(checklist2.name) == .orderedAscending })
+        lists.sort(by: { checklist1, checklist2 in return checklist1.name.localizedStandardCompare(checklist2.name) == .orderedAscending })
     }
     
     
@@ -82,7 +82,7 @@ class DataModel {
 
     func loadChecklists() {
         let path = dataFilePath()
-        if FileManager.default().fileExists(atPath: path) {
+        if FileManager.default.fileExists(atPath: path) {
             if let data = try? Data(contentsOf: URL(fileURLWithPath: path)) {
                 let unarchiver = NSKeyedUnarchiver(forReadingWith: data)
                 lists = unarchiver.decodeObject(forKey: "Checklists") as! [Checklist]

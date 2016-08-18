@@ -52,7 +52,7 @@ private extension ItemDetailViewController {
         
         if switchControl.isOn {
             let notificationSettings = UIUserNotificationSettings(types: [.alert, .sound], categories: nil)
-            UIApplication.shared().registerUserNotificationSettings(notificationSettings)
+            UIApplication.shared.registerUserNotificationSettings(notificationSettings)
         }
     }
 }
@@ -65,8 +65,8 @@ private extension ItemDetailViewController {
     
     func updateDueDateLabel() {
         let formatter = DateFormatter()
-        formatter.dateStyle = .mediumStyle
-        formatter.timeStyle = .shortStyle
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
         
         dueDateLabel.text = formatter.string(from: dueDate)
     }
@@ -253,8 +253,8 @@ extension ItemDetailViewController {
 extension ItemDetailViewController : UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let oldText: NSString = textField.text!
-        let newText: NSString = oldText.replacingCharacters(in: range, with: string)
+        let oldText = textField.text! as NSString
+        let newText = oldText.replacingCharacters(in: range, with: string) as NSString
 
         doneBarButton.isEnabled = (newText.length > 0)
 

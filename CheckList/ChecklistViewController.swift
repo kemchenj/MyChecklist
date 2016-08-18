@@ -29,18 +29,18 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
     // MARK: - Segue
     
     // 通知view某个segue将要触发了
-    override func prepare(for segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // 1. 因为代理可能不止一个，所以需要用identifier来判断是否是自己需要的那个代理
         // swift的==可以用在绝大部分数据类型上，例如string等
         if segue.identifier == "AddItem" {
             // 2. 从storyboard可以看到ChecklistViewController并不直接连AddItemViewController，中间隔着navigationBar，所以需要先获取navigationBar
-            let navigationController = segue.destinationViewController as! UINavigationController
+            let navigationController = segue.destination as! UINavigationController
             navigationController.title = "Add Item"
             let controller = navigationController.topViewController as! ItemDetailViewController
             // 3. 把AddItemViewController的代理设置为ChecklistViewController
             controller.delegate = self
         } else if segue.identifier == "EditItem" {
-            let navigationController = segue.destinationViewController as! UINavigationController
+            let navigationController = segue.destination as! UINavigationController
             let controller = navigationController.topViewController as! ItemDetailViewController
             navigationController.title = "Edit Item"
             controller.delegate = self

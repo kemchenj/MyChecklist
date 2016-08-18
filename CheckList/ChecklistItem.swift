@@ -18,7 +18,6 @@ class ChecklistItem: NSObject, NSCoding
     var shouldRemind = false
     var itemID : Int
     
-    
     override convenience init() {
         self.init(text: "", checked: false)
     }
@@ -46,25 +45,26 @@ class ChecklistItem: NSObject, NSCoding
         let existingNotification = notificationForThisItem()
         if let notification = existingNotification {
             print("Found an existing notification \(notification)")
-            UIApplication.shared().cancelLocalNotification(notification)
+            UIApplication.shared.cancelLocalNotification(notification)
         }
         
         if shouldRemind && dueDate.compare(Date()) != .orderedAscending {
             let localNotification = UILocalNotification()
+            
             localNotification.fireDate  = dueDate
-            localNotification.timeZone  = TimeZone.default()
+            localNotification.timeZone  = TimeZone.autoupdatingCurrent
             localNotification.alertBody = text
             localNotification.soundName = UILocalNotificationDefaultSoundName
             localNotification.userInfo  = ["ItemID": itemID]
             
-            UIApplication.shared().scheduleLocalNotification(localNotification)
+            UIApplication.shared.scheduleLocalNotification(localNotification)
             
             print("Scheduled notification \(localNotification) for itemID \(itemID)")
         }
     }
     
     func notificationForThisItem() -> UILocalNotification? {
-        let allNotifications = UIApplication.shared().scheduledLocalNotifications!
+        let allNotifications = UIApplication.shared.scheduledLocalNotifications!
         for notification in allNotifications {
             if (notification.userInfo?["itemID"] as? Int) != nil {
                 return notification
@@ -98,7 +98,7 @@ class ChecklistItem: NSObject, NSCoding
     deinit{
         if let notification = notificationForThisItem() {
             print("Removing existing notification \(notification)")
-            UIApplication.shared().cancelLocalNotification(notification)
+            UIApplication.shared.cancelLocalNotification(notification)
         }
     }
 }
