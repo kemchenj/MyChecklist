@@ -84,7 +84,7 @@ class AllListTableViewController: UITableViewController, ListDetailViewControlle
 
         let cell = cellForTableView(tableView)
 
-        let checklist = dataModel.lists[(indexPath as NSIndexPath).row]
+        let checklist = dataModel.lists[(indexPath ).row]
         cell.textLabel!.text  = checklist.name
         cell.accessoryType    = .detailDisclosureButton
         cell.imageView!.image = UIImage(named: checklist.iconName)
@@ -101,7 +101,7 @@ class AllListTableViewController: UITableViewController, ListDetailViewControlle
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        dataModel.lists.remove(at: (indexPath as NSIndexPath).row)
+        dataModel.lists.remove(at: (indexPath ).row)
 
         let indexPaths = [indexPath];
         tableView.deleteRows(at: indexPaths, with: .automatic)
@@ -113,7 +113,7 @@ class AllListTableViewController: UITableViewController, ListDetailViewControlle
         let controller = navigationController.topViewController as! ListDetailViewController
         controller.delegate = self
 
-        let checklist = dataModel.lists[(indexPath as NSIndexPath).row]
+        let checklist = dataModel.lists[indexPath.row]
 
         controller.checklistToEdit = checklist
 
@@ -121,9 +121,9 @@ class AllListTableViewController: UITableViewController, ListDetailViewControlle
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        dataModel.indexOfSelectedChecklist = (indexPath as NSIndexPath).row
+        dataModel.indexOfSelectedChecklist = (indexPath ).row
         
-        let checklist = dataModel.lists[(indexPath as NSIndexPath).row]
+        let checklist = dataModel.lists[(indexPath ).row]
         performSegue(withIdentifier: "ShowChecklist", sender: checklist)
     }
 

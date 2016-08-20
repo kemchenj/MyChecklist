@@ -46,7 +46,7 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
             controller.delegate = self
             // 函数定义的参数列表里有any Object的话，在调用的时候就需要指定该参数的类型
             if let indexPath = tableView.indexPath(for: sender as! UITableViewCell) {
-                controller.itemToEdit = checklist.items[(indexPath as NSIndexPath).row]
+                controller.itemToEdit = checklist.items[(indexPath ).row]
             }
         }
     }
@@ -115,7 +115,7 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistItem", for: indexPath)
 
-        let item = checklist.items[(indexPath as NSIndexPath).row]
+        let item = checklist.items[(indexPath ).row]
 
         configureTextForCell(cell, withChecklistItem: item)
         configureCheckmarkForCell(cell, withChecklistItem: item)
@@ -125,7 +125,7 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
     // check or uncheck
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) {
-            let item = checklist.items[(indexPath as NSIndexPath).row]
+            let item = checklist.items[(indexPath ).row]
             item.toggleChecked()
             
             configureCheckmarkForCell(cell, withChecklistItem: item)
@@ -135,7 +135,7 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         // 1. Remove the item from the data model
-        checklist.items.remove(at: (indexPath as NSIndexPath).row)
+        checklist.items.remove(at: (indexPath ).row)
         // 2. Delete the corresponding row from the table view
         let indexPaths = [indexPath]
         tableView.deleteRows(at: indexPaths, with: .automatic)

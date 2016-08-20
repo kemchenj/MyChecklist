@@ -8,6 +8,8 @@
 
 import Foundation
 
+
+
 class DataModel {
     var lists = [Checklist]()
     var indexOfSelectedChecklist : Int {

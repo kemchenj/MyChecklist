@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import UserNotifications
+
 
 
 class ChecklistItem: NSObject, NSCoding
@@ -32,48 +34,10 @@ class ChecklistItem: NSObject, NSCoding
         self.itemID = DataModel.nextChecklistItemID()
         super.init()
     }
-
+    
     func toggleChecked() {
         checked = !checked
     }
-    
-    
-    
-    // MARK: - Notification
-    
-    func scheduleNotification() {
-        let existingNotification = notificationForThisItem()
-        if let notification = existingNotification {
-            print("Found an existing notification \(notification)")
-            UIApplication.shared.cancelLocalNotification(notification)
-        }
-        
-        if shouldRemind && dueDate.compare(Date()) != .orderedAscending {
-            let localNotification = UILocalNotification()
-            
-            localNotification.fireDate  = dueDate
-            localNotification.timeZone  = TimeZone.autoupdatingCurrent
-            localNotification.alertBody = text
-            localNotification.soundName = UILocalNotificationDefaultSoundName
-            localNotification.userInfo  = ["ItemID": itemID]
-            
-            UIApplication.shared.scheduleLocalNotification(localNotification)
-            
-            print("Scheduled notification \(localNotification) for itemID \(itemID)")
-        }
-    }
-    
-    func notificationForThisItem() -> UILocalNotification? {
-        let allNotifications = UIApplication.shared.scheduledLocalNotifications!
-        for notification in allNotifications {
-            if (notification.userInfo?["itemID"] as? Int) != nil {
-                return notification
-            }
-        }
-        return nil
-    }
-    
-    
     
     // MARK: - NSCoindg Protocol
     
@@ -86,7 +50,7 @@ class ChecklistItem: NSObject, NSCoding
         
         super.init()
     }
-
+    
     func encode(with aCoder: NSCoder) {
         aCoder.encode(text, forKey: "Text")
         aCoder.encode(checked, forKey: "Checked")
@@ -94,11 +58,32 @@ class ChecklistItem: NSObject, NSCoding
         aCoder.encode(shouldRemind, forKey: "ShouldRemind")
         aCoder.encode(itemID, forKey: "ItemID")
     }
+}
+
+
+
+// MARK: - Notification
+
+extension ChecklistItem {
     
-    deinit{
-        if let notification = notificationForThisItem() {
-            print("Removing existing notification \(notification)")
-            UIApplication.shared.cancelLocalNotification(notification)
+    func scheduleNotification() {
+        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: ["\(itemID)"])
+        
+        if shouldRemind && dueDate.compare(Date()) != .orderedAscending {
+            let trigger = UNCalendarNotificationTrigger.getTrigger(in: dueDate)
+            
+            let content = UNMutableNotificationContent()
+            content.sound = UNNotificationSound.default()
+            content.title = text
+            content.subtitle = "     "
+            content.body = "   "
+            
+            let request = UNNotificationRequest(identifier: "\(itemID)",
+                                                content: content,
+                                                trigger: trigger)
+            
+            UNUserNotificationCenter.current().add(request)
         }
     }
+    
 }

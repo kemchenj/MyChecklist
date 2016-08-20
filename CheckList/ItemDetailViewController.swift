@@ -8,13 +8,13 @@
 
 import Foundation
 import UIKit
+import UserNotifications
 
 
 
 // MARK: - Delegate Protocol
 
-protocol ItemDetailViewControllerDelegate: class
-{
+protocol ItemDetailViewControllerDelegate: class {
     func itemDetailViewController(_ controller: ItemDetailViewController, didFinishEditItem item: ChecklistItem)
     func itemDetailViewController(_ controller: ItemDetailViewController, didFinishAddingItem item: ChecklistItem)
     func itemDetailViewControllerDidCancel(_ controller: ItemDetailViewController)
@@ -38,21 +38,25 @@ class ItemDetailViewController: UITableViewController {
     @IBOutlet weak var dueDateLabel: UILabel!
     @IBOutlet weak var datePicker: UIDatePicker!
     @IBOutlet weak var datePickerCell: UITableViewCell!
-    
 }
 
 
 
 // MARK: - Notification
 
-private extension ItemDetailViewController {
+extension ItemDetailViewController: Hudable {
     
     @IBAction func shouldRemindToggled(_ switchControl: UISwitch) {
         textField.resignFirstResponder()
         
         if switchControl.isOn {
-            let notificationSettings = UIUserNotificationSettings(types: [.alert, .sound], categories: nil)
-            UIApplication.shared.registerUserNotificationSettings(notificationSettings)
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert], completionHandler: { [weak self] (granded, error) in
+                guard let strongSelf = self else { fatalError() }
+                
+                if let error = error {
+                    strongSelf.showHudInView(text: "\(error)", rootView: strongSelf.view, animated: true)
+                }
+            })
         }
     }
 }
@@ -115,7 +119,7 @@ private extension ItemDetailViewController {
 
 // MARK: - Button (Navigation Bar)
 
-private extension ItemDetailViewController{
+private extension ItemDetailViewController {
 
     @IBAction func cancel() {
         delegate?.itemDetailViewControllerDidCancel(self)
@@ -150,7 +154,7 @@ private extension ItemDetailViewController{
 
 
 
-// MARK: - Root View
+// MARK: - View Lifecyle
 
 extension ItemDetailViewController {
 
@@ -163,7 +167,7 @@ extension ItemDetailViewController {
             shouldRemindSwitch.isOn = item.shouldRemind
             dueDate = item.dueDate as Date
         }
-        
+                
         updateDueDateLabel()
     }
 
@@ -176,13 +180,14 @@ extension ItemDetailViewController {
 }
 
 
+
 // MARK: - TableView
 // MARK: + Delegate
 
 extension ItemDetailViewController {
     
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if (indexPath as NSIndexPath).section == 1 && (indexPath as NSIndexPath).row == 1 {
+        if (indexPath ).section == 1 && (indexPath ).row == 1 {
             return indexPath
         } else {
             return nil
@@ -190,7 +195,7 @@ extension ItemDetailViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if (indexPath as NSIndexPath).section == 1 && (indexPath as NSIndexPath).row == 2 {
+        if (indexPath ).section == 1 && (indexPath ).row == 2 {
             return 217
         } else {
             return super.tableView(tableView, heightForRowAt: indexPath)
@@ -201,7 +206,7 @@ extension ItemDetailViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         textField.resignFirstResponder()
         
-        if (indexPath as NSIndexPath).section == 1 && (indexPath as NSIndexPath).row == 1 {
+        if (indexPath ).section == 1 && (indexPath ).row == 1 {
             if datePickerVisible {
                 hideDatePicker()
             } else {
@@ -213,8 +218,8 @@ extension ItemDetailViewController {
     override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
         var tempPath = indexPath
         
-        if (indexPath as NSIndexPath).section == 1 && (indexPath as NSIndexPath).row == 2 {
-            tempPath = IndexPath(row: 0, section: (indexPath as NSIndexPath).section)
+        if (indexPath ).section == 1 && (indexPath ).row == 2 {
+            tempPath = IndexPath(row: 0, section: (indexPath ).section)
         }
         
         return super.tableView(tableView, indentationLevelForRowAt:tempPath)
@@ -229,7 +234,7 @@ extension ItemDetailViewController {
 extension ItemDetailViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if (indexPath as NSIndexPath).section == 1 && (indexPath as NSIndexPath).row == 2 {
+        if (indexPath ).section == 1 && (indexPath ).row == 2 {
             return datePickerCell
         } else {
             return super.tableView(tableView, cellForRowAt: indexPath)

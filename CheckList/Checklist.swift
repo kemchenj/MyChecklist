@@ -13,8 +13,6 @@ class Checklist: NSObject, NSCoding
     var name  = ""
     var items = [ChecklistItem]()
     var iconName: String
-
-    
     
     convenience init(name: String) {
         self.init(name: name, iconName: "No Icon")
@@ -27,22 +25,11 @@ class Checklist: NSObject, NSCoding
     }
     
     func countUncheckedItems() -> Int{
-        // var count = 0
-        // for item in items where !item.checked {
-        //     count += 1
-        // }
-        
-        // return count
-        
-        
         return items.reduce(0) { cnt, item in cnt + (item.checked ? 0 : 1) }
-        // cnt是参数的名字, 也就是0, 可以随意更改
-        // item in items
-        // cnt + (item.checked ? 0 : 1)
     }
     
     func sortItemsWithDueDate() {
-        items.sort(by: { item1, item2 in return item1.dueDate.compare(item2.dueDate as Date) == .orderedAscending })
+        items.sort(by: { $0.dueDate.compare($1.dueDate as Date) == .orderedAscending })
     }
     
     
